@@ -19,6 +19,7 @@
     "react": "18.2.0",
     "react-native": "0.74.2",
     "react-native-element-dropdown": "^2.12.0",
+    "react-native-paper": "^5.12.3",
     "react-native-picker-select": "^9.1.3",
     "yup": "^1.4.0"
   },

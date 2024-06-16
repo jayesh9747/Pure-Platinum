@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Screen from './app/components/Screen';
 import AppText from './app/components/AppText';
 import WelcomeScreen from './app/screens/WelcomeScreen';
@@ -13,8 +13,10 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import Card from './app/components/Card';
 import ProductCard from './app/components/ProductCard';
+import CheckboxGroup from './app/components/CheckboxGroup';
 
 export default function App() {
+  const sizeOptions = [11, 18, 20, 19, 21, 22, 23, 45, 45, 69, 78];
   return (
     <>
       <NavigationContainer theme={navigationTheme} >
@@ -26,9 +28,18 @@ export default function App() {
           imageUrl={"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"}
           discount={"make order"}
           productName={"Ring"}
-        /> */}
-        {/* <Card title="Ring" imageSource={{ uri: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg" }} onPress={() => { }} /> */}
-         {/* </View> */}
+        />
+        <Card title="Ring" imageSource={{ uri: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg" }} onPress={() => { }} /> */}
+
+
+
+
+        {/* <View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            <CheckboxGroup title="Size:" options={sizeOptions} />
+          </ScrollView>
+        </View> */}
+      {/* </View> */} 
 
     </>
   );

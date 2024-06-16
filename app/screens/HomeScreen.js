@@ -43,7 +43,7 @@ const HomeScreen = () => {
                     <Text style={styles.sectionTitle}>Medley Collection</Text>
                     <Text style={styles.viewAllText}>view all</Text>
                 </View>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {products.map((product, index) => (
                         <ProductCard
                             key={index}
@@ -79,9 +79,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         paddingLeft: 10,
         fontWeight: 'bold',
-    },
-    horizontalScroll: {
-        paddingHorizontal: 10,
     },
     priceContainer: {
         backgroundColor: '#ff6f61',

@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import routes from "./routes";
 import HomeScreen from '../screens/HomeScreen'
 import AppButton from '../components/AppButton';
+import ProductViewScreen from '../screens/ProductViewScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -23,7 +24,7 @@ function AppNavigator(props) {
                 }} />
             <Tab.Screen
                 name="Wishlist"
-                component={AppButton}
+                component={ProductViewScreen}
                 options={{
                     tabBarIcon: ({ size, color }) => <MaterialCommunityIcons name="heart" size={size} color={color} />
                 }} />
