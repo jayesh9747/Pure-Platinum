@@ -1,42 +1,124 @@
-// ProductCard.js
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import color from '../config/color';
+import useCartStore from '../hooks/useCartStore';
+import useWishListStore from '../hooks/useWishListStore';
 
-const ProductCard = ({ imageUrl, discount, productName, onPress }) => {
+const ProductCard = ({ product, navigation }) => {
+    const { id, title, thumbnail, discount = "Make to Order" } = product;
+
+    const productImageUri = thumbnail;
+
+    const addProductToCart = useCartStore(state => state.addProduct);
+    const removeProductFromCart = useCartStore(state => state.removeProduct);
+    const cartProducts = useCartStore(state => state.products);
+
+    const addProductToWishList = useWishListStore(state => state.addProduct);
+    const removeProductFromWishList = useWishListStore(state => state.removeProduct);
+    const wishListProducts = useWishListStore(state => state.products);
+
+    const [isInCart, setInCart] = useState(false);
+    const [isInWishList, setInWishList] = useState(false);
+
+    useEffect(() => {
+        const productInCart = cartProducts.some(cartProduct => cartProduct.id === id);
+        setInCart(productInCart);
+        const productInWishList = wishListProducts.some(wishListProduct => wishListProduct.id === id);
+        setInWishList(productInWishList);
+    }, [cartProducts, wishListProducts, id]);
+
+    const handleCartAction = () => {
+        if (isInCart) {
+            removeProductFromCart(id);
+        } else {
+            addProductToCart(product);
+        }
+        setInCart(!isInCart); 
+    };
+
+    const handleWishListAction = () => {
+        if (isInWishList) {
+            removeProductFromWishList(id);
+        } else {
+            addProductToWishList(product);
+        }
+        setInWishList(!isInWishList); 
+    };
+
     return (
-        <TouchableWithoutFeedback onPress={onPress}>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('ProductDetail', { productId: id })}>
             <View style={styles.card}>
                 <View style={styles.discountTag}>
                     <Text style={styles.discountText}>{discount}</Text>
                 </View>
-                <Image source={{ uri: imageUrl }} style={styles.productImage} />
-                <Text style={styles.productName}>{productName}</Text>
+                <Image source={{ uri: productImageUri }} style={styles.productImage} />
+                <Text style={styles.productName}>{title}</Text>
+                <View style={styles.actions}>
+                    <TouchableWithoutFeedback onPress={handleWishListAction}>
+                        <View style={[styles.icon, isInWishList && styles.iconInWishList]}>
+                            <FontAwesome name="heart-o" size={22} color="black" />
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={handleCartAction}>
+                        <View style={[styles.icon, isInCart && styles.iconInCart]}>
+                            <FontAwesome name="shopping-cart" size={22} color="black" />
+                        </View>
+                    </TouchableWithoutFeedback>
+                </View>
             </View>
         </TouchableWithoutFeedback>
-
     );
 };
 
-
 const styles = StyleSheet.create({
-    card: {
+    actions: {
+        flexDirection: 'column',
+        position: 'absolute',
+        top: 15,
+        right: 10
+    },
+    icon: {
+        marginRight: -2,
+        marginBottom: 10,
+        width: 35,
+        height: 35,
+        borderRadius: 100,
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 5,
+        borderColor: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1,
+        shadowColor: '#000',
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    iconInCart: {
+        backgroundColor: 'green',
+    },
+    iconInWishList: {
+        backgroundColor: 'red',
+    },
+    card: {
         padding: 10,
         margin: 4,
         backgroundColor: '#fff',
-        position: 'relative',
+        width: 165,
+        height: 190,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
         alignItems: 'center',
-        width: 200,
-        height: 240
+        justifyContent: 'space-between',
+        position: 'relative'
     },
     discountTag: {
         position: 'absolute',
-        top: 20,
+        top: 15,
         left: 0,
-        backgroundColor: '#ff6347',
+        backgroundColor: '#A96C35',
         padding: 5,
         borderTopEndRadius: 100,
         borderBottomEndRadius: 100,
@@ -45,17 +127,22 @@ const styles = StyleSheet.create({
     discountText: {
         color: '#fff',
         fontSize: 15,
+        paddingRight: 5
     },
     productImage: {
-        marginTop: 0,
-        width: 180,
-        height: 180,
+        marginTop: 40,
+        width: 150,
+        height: 105,
         marginBottom: 10,
         resizeMode: 'contain',
+        marginLeft: -10
     },
     productName: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: color.medium,
+        marginLeft: -10,
+        textAlign: "center"
     },
 });
 

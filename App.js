@@ -1,55 +1,52 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import Screen from './app/components/Screen';
-import AppText from './app/components/AppText';
-import WelcomeScreen from './app/screens/WelcomeScreen';
-import LoginScreen from './app/screens/LoginScreen';
-import RegisterScreen from './app/screens/RegisterScreen';
-import AppDropdownField from './app/components/forms/AppDropdownField';
-import AppNavigator from './app/navigations/AppNavigator';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+
+import { NavigationContainer } from '@react-navigation/native';
+import * as SplashScreen from 'expo-splash-screen';
+
 
 import navigationTheme from './app/navigations/navigationtheme';
-import { NavigationContainer } from '@react-navigation/native';
+import AuthNavigator from './app/navigations/AuthNavigator';
+import AppNavigator from './app/navigations/AppNavigator';
 
-import Card from './app/components/Card';
-import ProductCard from './app/components/ProductCard';
-import CheckboxGroup from './app/components/CheckboxGroup';
+import authStorage from './app/auth/authStore';
+import AuthContext from './app/auth/context';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const sizeOptions = [11, 18, 20, 19, 21, 22, 23, 45, 45, 69, 78];
+  const [isReady, setReady] = useState(false);
+  const [token, setToken] = useState(null);
+
+  const restoreToken = async () => {
+    const authToken = await authStorage.getToken();
+    console.log(authToken);
+    if (authToken) setToken(authToken);
+  };
+
+  useEffect(() => {
+    const rehydrate = async () => {
+      await restoreToken();
+      setReady(true);
+      await SplashScreen.hideAsync();
+    };
+    rehydrate();
+  }, []);
+
+  if (!isReady) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
-    <>
-      <NavigationContainer theme={navigationTheme} >
-        <AppNavigator />
+    <AuthContext.Provider value={{ token, setToken }}>
+      <NavigationContainer theme={navigationTheme}>
+        {token ? <AppNavigator /> : <AuthNavigator />}
       </NavigationContainer>
-
-      {/* <View style={styles.container}>
-        {/* <ProductCard
-          imageUrl={"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"}
-          discount={"make order"}
-          productName={"Ring"}
-        />
-        <Card title="Ring" imageSource={{ uri: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg" }} onPress={() => { }} /> */}
-
-
-
-
-        {/* <View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <CheckboxGroup title="Size:" options={sizeOptions} />
-          </ScrollView>
-        </View> */}
-      {/* </View> */} 
-
-    </>
+    </AuthContext.Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

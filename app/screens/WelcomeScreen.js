@@ -1,17 +1,21 @@
 import React from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 
 import AppButton from '../components/AppButton';
+import routes from '../navigations/routes';
 
-const WelcomeScreen = (props) => {
+const WelcomeScreen = ({navigation}) => {
+
+   
+
     return (
         <View style={styles.backGround}>
             <View style={styles.logoContainer}>
-                <Image style={styles.logo} source={require('../assets/logo.png')} />
+                <Image style={styles.logo} source={require('../assets/logo-final.png')} />
             </View>
             <View style={styles.buttonContainer}>
-                <AppButton title={'Login'} />
-                <AppButton title={'Register'} color='primary' />
+                <AppButton title={'Login'} onPress={()=>navigation.navigate(routes.LOGIN)} />
+                <AppButton title={'Register'} color='primary' onPress={() => navigation.navigate(routes.REGISTER)} />
             </View>
         </View>
     );

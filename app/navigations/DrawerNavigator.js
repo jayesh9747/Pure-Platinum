@@ -1,17 +1,19 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import LoginScreen from '../screens/LoginScreen'
-import WelcomeScreen from '../screens/WelcomeScreen';
+import BottomTabNavigator from './BottomTabNavigator';
+import ScreenA from '../screens/ScreenA';
+import ScreenB from '../screens/ScreenB';
 
 const Drawer = createDrawerNavigator();
 
-function DrawerNavigator() {
+const DrawerNavigator = () => {
   return (
-    <Drawer.Navigator>
-      <Drawer.Screen name="t1" component={LoginScreen} />
-      <Drawer.Screen name="t2" component={WelcomeScreen} />
+    <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Screen name="Home" component={BottomTabNavigator} />
+      <Drawer.Screen name="ScreenA" component={ScreenA} />
+      <Drawer.Screen name="ScreenB" component={ScreenB} />
     </Drawer.Navigator>
   );
-}
+};
 
 export default DrawerNavigator;

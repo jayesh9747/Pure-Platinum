@@ -1,14 +1,14 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 
-import routes from "./routes";
-import HomeScreen from '../screens/HomeScreen'
-import AppButton from '../components/AppButton';
-import ProductViewScreen from '../screens/ProductViewScreen';
+import HomeNavigator from './HomeNavigator';
+import CartScreen from '../screens/CartScreen';
+import WishListScreen from '../screens/WishListScreen'
+import AccountScreen from '../screens/AccountScreen';
+
+
 
 
 const Tab = createBottomTabNavigator();
@@ -17,29 +17,31 @@ function AppNavigator(props) {
     return (
         <Tab.Navigator>
             <Tab.Screen
-                name="Home"
-                component={HomeScreen}
+                name="HomeScreen"
+                component={HomeNavigator}
                 options={{
-                    tabBarIcon: ({ size, color }) => <MaterialCommunityIcons name="home" size={size} color={color} />
+                    tabBarIcon: ({ size, color }) => <MaterialCommunityIcons name="home" size={size} color={color} />,
+                    title: 'Pure Platinum',
+                    headerShown: false
                 }} />
             <Tab.Screen
                 name="Wishlist"
-                component={ProductViewScreen}
+                component={WishListScreen}
                 options={{
                     tabBarIcon: ({ size, color }) => <MaterialCommunityIcons name="heart" size={size} color={color} />
                 }} />
             <Tab.Screen
                 name="Cart"
-                component={AppButton}
+                component={CartScreen}
                 options={{
                     tabBarIcon: ({ size, color }) => <MaterialCommunityIcons name="cart" size={size} color={color} />
                 }} />
             <Tab.Screen
                 name="Account"
-                component={AppButton}
+                component={AccountScreen}
                 options={{
                     tabBarIcon: ({ size, color }) => <MaterialCommunityIcons name="account" size={size} color={color} />
-                }} />    
+                }} />
         </Tab.Navigator>
     );
 }

@@ -1,24 +1,38 @@
-import React from 'react'
-import { StyleSheet, TextInput, View, Platform } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import React from 'react';
+import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import defaultStyles from '../config/style';
+import color from '../config/color';
 
-
-import defaultStyles from '../config/style'
-import color from '../config/color'
-
-const AppTextInput = ({ icon, width = '100%', ...otherProps }) => {
+const AppTextInput = ({ icon, rightIcon, onRightIconPress, width = '100%', ...otherProps }) => {
     return (
-        <>
         <View style={[styles.container, { width }]}>
-            {icon &&
-                <MaterialCommunityIcons name={icon} size={25} color={defaultStyles.colors.medium} style={styles.icon}
-                />}
-            <TextInput placeholderTextColor={defaultStyles.colors.medium} style={defaultStyles.text} {...otherProps} />
+            {icon && (
+                <MaterialCommunityIcons
+                    name={icon}
+                    size={25}
+                    color={defaultStyles.colors.medium}
+                    style={styles.icon}
+                />
+            )}
+            <TextInput
+                placeholderTextColor={defaultStyles.colors.medium}
+                style={[styles.textInput, defaultStyles.text]}
+                {...otherProps}
+            />
+            {rightIcon && (
+                <TouchableOpacity onPress={onRightIconPress} style={styles.rightIconContainer}>
+                    <MaterialCommunityIcons
+                        name={rightIcon}
+                        size={25}
+                        color={defaultStyles.colors.medium}
+                    />
+                </TouchableOpacity>
+            )}
         </View>
-        </>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -28,13 +42,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 10,
         marginVertical: 10,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     icon: {
-        marginRight: 10
+        marginRight: 10,
     },
+    textInput: {
+        flex: 1,
+    },
+    rightIconContainer: {
+        marginLeft: 10,
+    },
+});
 
-})
-export default AppTextInput
-
+export default AppTextInput;
 

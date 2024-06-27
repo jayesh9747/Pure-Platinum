@@ -1,162 +1,268 @@
-import React from 'react'
-import { StyleSheet, Image, TouchableWithoutFeedback, View, ScrollView,TextInput } from 'react-native'
-import * as Yup from 'yup';
-
-
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Image, TouchableWithoutFeedback, View, ScrollView, Text } from 'react-native';
 import AppText from '../components/AppText';
 import Screen from '../components/Screen';
 import { AppFormField, SubmitButton, AppForm } from '../components/forms';
 import color from '../config/color';
-import AppDropdownField from '../components/forms/AppDropdownField';
+import routes from '../navigations/routes';
+import dropdownApi from '../apis/dropdown';
+import validation from '../validation/registerValidation'
+import authapi from '../apis/AuthApi';
 
 
-const validationSchema = Yup.object().shape({
-    "Mobile No": Yup.string()
-        .matches(/^[6-9]\d{9}$/, 'Mobile number is not valid')
-        .required()
-        .label('Mo Number'),
-    Password: Yup.string().required().min(6).label('Password')
-})
 
 const RegisterScreen = ({ navigation }) => {
 
+    const [countryTags, SetcountryTags] = useState([]);
+    const [stateTags, SetStateTags] = useState([]);
+    const [cityTags, SetCityTags] = useState([]);
+
+
+    const fetchCountries = async () => {
+        try {
+            const result = await dropdownApi.getCountries();
+
+            country = result.data.data.map((country) => ({
+                label: country?.name,
+                value: country?.id
+            }));
+            console.log(country);
+            SetcountryTags(country);
+
+        } catch (error) {
+            console.log(`error is occurred while fetching country`, error);
+        }
+    }
+
+    const fetchStates = async (country_id) => {
+        try {
+            const result = await dropdownApi.getStates(country_id || "101");
+
+            states = result.data.data.map((state) => ({
+                label: state?.name,
+                value: state?.id
+            }));
+            console.log(states);
+            SetStateTags(states);
+
+        } catch (error) {
+            console.log(`error is occurred while fetching states`, error);
+        }
+    }
+
+    const fetchCities = async (state_id) => {
+        try {
+            const result = await dropdownApi.getCity(state_id || "4030");
+
+            cities = result.data.data.map((city) => ({
+                label: city?.name,
+                value: city?.id
+            }));
+            console.log(cities);
+            SetCityTags(cities);
+
+        } catch (error) {
+            console.log(`error is occurred while fetching cities`, error);
+        }
+    }
+
+
+    const handleSubmit = async (registerData) => {
+        console.log(registerData)
+        try {
+            const result = await authapi.register(registerData);
+            console.log(result);
+            if (!result) throw new Error(result.problem);
+
+            console.log("successfully login the user",result.data);
+        } catch (error) {
+            console.error(error.response?.data?.message)
+        }
+    }
+
+
+    useEffect(() => {
+        fetchCountries();
+        fetchStates();
+        fetchCities();
+    }, []);
+
+
+
+
     return (
         <Screen style={styles.container}>
-            <Image
-                style={styles.logo}
-                source={require('../assets/logo.png')} />
+            <Image style={styles.logo} source={require('../assets/logo-final.png')} />
             <AppText style={styles.title}>Create An Account</AppText>
-            <View style={styles.register} >
-                <AppText style={styles.subtitle}>I already have an account  Sign in </AppText>
-                {/* <TouchableWithoutFeedback onPress={() => navigation.navigate(routes.REGISTER)}>
-                    <AppText style={styles.footer}>Create account</AppText>
-                </TouchableWithoutFeedback> */}
+            <View style={styles.register}>
+                <Text style={styles.subtitle}>I already have an account. </Text>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate(routes.LOGIN)}>
+                    <AppText style={[styles.subtitle, styles.subtitlePart]}>Sign in</AppText>
+                </TouchableWithoutFeedback>
             </View>
-            <View style={styles.register} >
-                <AppText style={styles.subtitle}>Uncertain about creating an account ? Explore the benefits</AppText>
-                {/* <TouchableWithoutFeedback onPress={() => navigation.navigate(routes.REGISTER)}>
-                    <AppText style={styles.footer}>Create account</AppText>
-                </TouchableWithoutFeedback> */}
+            <View style={styles.register}>
+                <Text style={styles.subtitle}>Uncertain about creating an account? </Text>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate(routes.LOGIN)}>
+                    <Text style={[styles.subtitle, styles.subtitlePart]}>Explore the benefits</Text>
+                </TouchableWithoutFeedback>
             </View>
-
             <ScrollView showsVerticalScrollIndicator={false} style={styles.ScrollView}>
                 <AppForm
-                    initialValues={{ "Mobile No": '', Password: '' }}
-                    onSubmit={(values) => console.log(values)}
-                    validationSchema={validationSchema}
+                    initialValues={{
+                        name: '',
+                        email: '',
+                        mobile: '',
+                        company: '',
+                        customer_type: '',
+                        gst_no: '',
+                        password: '',
+                        confirmPassword: '',
+                        address: '',
+                        dob: '',
+                        city_id: '',
+                        state_id: '',
+                        country_id: '',
+                        address: '',
+                        pin_code: '',
+                    }}
+                    onSubmit={(values) => handleSubmit(values)}
+                    validationSchema={validation.RegisterValidationSchema}
                 >
                     <AppFormField
                         autoCorrect={false}
-                        name='Name'
-                        placeholder='Enter Name'
-                    />
+                        name="name"
+                        title="Name"
+                        placeholder="Enter Name" />
                     <AppFormField
                         autoCorrect={false}
-                        name='Mobile No.'
+                        name="mobile"
+                        title="Mobile No"
                         keyboardType="numeric"
-                        placeholder='Enter Mobile'
-                    />
+                        placeholder="Enter Mobile" />
                     <AppFormField
-                        autoCapitalize='none'
+                        autoCapitalize="none"
                         autoCorrect={false}
-                        keyboardType='email-address'
-                        name='Email'
-                        placeholder='Enter Email'
-                    />
+                        keyboardType="email-address"
+                        name="email"
+                        title={"Email"}
+                        placeholder="Enter Email" />
                     <AppFormField
-                        name='Company'
-                        placeholder='Enter Company'
-                    />
+                        name="company"
+                        title="Company"
+                        placeholder="Enter Company" />
                     <AppFormField
-                        name='Customer Type'
-                        placeholder='Select Type'
-                    />
+                        title="Customer Type"
+                        name="customer_type"
+                        type="dropdown"
+                        items={[
+                            { label: 'Corporate', value: 'corporate' },
+                            { label: 'Export', value: 'export' },
+                            { label: 'Retailer', value: 'retailer' },
+                            { label: 'Wholesaler', value: 'wholesaler' },
+                        ]} placeholder="Select customerType" />
                     <AppFormField
-                        name='GST No.'
-                        placeholder='Enter GST No.'
-                    />
+                        title="GST No"
+                        name="gst_no"
+                        placeholder="Enter GST No." />
                     <AppFormField
-                        autoCapitalize='none'
+                        title="Password"
+                        autoCapitalize="none"
                         autoCorrect={false}
-                        name='Password'
-                        placeholder='Password'
+                        name="password"
+                        placeholder="Password"
                         secureTextEntry
-                        textContentType='password'
-                    />
+                        textContentType="password" />
                     <AppFormField
-                        autoCapitalize='none'
+                        title='Confirm Password'
+                        autoCapitalize="none"
                         autoCorrect={false}
-                        name='confirm Password'
-                        placeholder='Password'
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
                         secureTextEntry
-                        textContentType='password'
-                    />
+                        textContentType="password" />
                     <AppFormField
-                        name='Date pf Birth'
-                        placeholder='Choose Date'
-                    />
+                        title="Address"
+                        name="address"
+                        placeholder="Enter Address"
+                        multiline
+                        numberOfLines={4} />
                     <AppFormField
-                        name='Address'
-                        placeholder='Enter Address'
-                    />
+                        title='Date of Birth'
+                        name="dob"
+                        type="date"
+                        placeholder="Choose Date" />
 
-                    {/* ############ */}
+                    <AppFormField
+                        title={'Country'}
+                        name="country_id"
+                        type="dropdown"
+                        disable={countryTags === '' ? true : false}
+                        items={countryTags}
+                        placeholder="Select country" />
 
-                    {/* <AppDropdownField/> */}
-
-
-
-                    <AppText style={styles.forgetpass}>Forget Password?</AppText>
-                    <SubmitButton title='Login' color={color.primary} />
+                    <AppFormField
+                        title='State'
+                        name="state_id" type="dropdown"
+                        items={stateTags}
+                        placeholder="Select state" />
+                    <AppFormField
+                        title="City"
+                        name="city_id"
+                        type="dropdown"
+                        items={cityTags} 
+                        placeholder="Select city" />
+                    <AppFormField
+                        autoCorrect={false}
+                        name="pin_code"
+                        title="PIN Code"
+                        keyboardType="numeric"
+                        placeholder="Enter PIN CODE" />
+                    <SubmitButton
+                        title="Register"
+                        color={color.primary} />
                 </AppForm>
+                <AppText style={styles.footerline}>All Rights are reserved Madeby Konnections</AppText>
             </ScrollView>
-            <AppText style={styles.footerline}>All Rights are reserved Madeby Konnections</AppText>
+
         </Screen>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 8,
     },
     logo: {
-        width: 150,
-        height: 60,
+        width: 160,
+        height: 80,
         resizeMode: 'contain',
         marginVertical: 0,
     },
-    footer: {
-        textDecorationLine: 'underline',
-    },
-    forgetpass: {
-        textAlign: 'right',
-        color: color.medium,
-        fontSize: 15,
-        fontWeight: "600",
-        marginVertical: 10
-    },
     footerline: {
         fontSize: 12,
-        color: color.medium
+        color: color.medium,
     },
     title: {
         fontSize: 25,
-        marginBottom: 15
+        marginBottom: 10,
     },
     subtitle: {
         color: color.medium,
         marginBottom: 15,
-        fontSize: 12
+        fontSize: 12,
+    },
+    subtitlePart: {
+        textDecorationLine: 'underline',
     },
     ScrollView: {
-        margin: 2
+        margin: 2,
     },
     register: {
         flexDirection: 'row',
         alignItems: 'center',
         fontSize: 15,
         color: color.medium,
-    }
-})
+    },
+});
 
 export default RegisterScreen;

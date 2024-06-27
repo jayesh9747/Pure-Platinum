@@ -1,11 +1,11 @@
-
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import color from '../config/color';
 import CheckboxGroup from '../components/CheckboxGroup';
 import AppTable from '../components/AppTable';
 
-const ProductViewScreen = () => {
+const ProductViewScreen = ({ route }) => {
+    const { productId } = route.params || 5 ;
     const productImageUri = 'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg';
     const sizeOptions = [11, 18, 20, 19, 21, 22, 23, 45, 69, 78];
     const diamondQualityOptions = ["si-43", "VVS-EF", "Si-ch"];
@@ -30,7 +30,7 @@ const ProductViewScreen = () => {
                 <Image source={{ uri: productImageUri }} style={styles.productImage} />
 
                 <View style={styles.productCodeContainer}>
-                    <Text style={styles.productCode}>Code: PPRO3151D</Text>
+                    <Text style={styles.productCode}>Code: {productDetails[0]['Code']}</Text>
                 </View>
 
                 <View style={styles.optionSection}>
@@ -133,4 +133,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProductViewScreen;
-

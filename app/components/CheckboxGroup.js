@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import CustomCheckbox from './CustomCheckbox'; // Adjust the import path as needed
+import CustomCheckbox from './CustomCheckbox';
 
 const CheckboxGroup = ({ title, options }) => {
     const [selectedOption, setSelectedOption] = useState(null);

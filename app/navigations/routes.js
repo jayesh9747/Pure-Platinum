@@ -5,4 +5,6 @@ export default Object.freeze({
     LOGIN: "Login",
     REGISTER: "Register",
     WISH_LIST: "Wishlist",
+    PRODUCT_LIST : "ProductList",
+    PRODUCT_DETAILS: 'ProductDetail',
 })

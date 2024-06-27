@@ -1,10 +1,36 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import Card from '../components/Card';
-import ProductCard from '../components/ProductCard';
+import CategoryCard from '../components/CategoryCard';
+import CollectionCard from '../components/CollectionCard';
+import categoriesApi from '../apis/category';
+import routes from '../navigations/routes';
+import AppText from '../components/AppText';
 
-const HomeScreen = () => {
+import { ActivityIndicator } from 'react-native-paper';
+
+const HomeScreen = ({ navigation }) => {
+
+    const [categories, setCategories] = useState([]);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const loadCategories = async () => {
+        try {
+            setLoading(true);
+            const response = await categoriesApi.getCategories();
+            // console.log("this is category product data",response.data.data)
+            setLoading(false);
+            setError(false);
+            setCategories(response.data?.data);
+        } catch (error) {
+            setError(true);
+            console.log(error.response)
+        }
+    };
+
+    useEffect(() => {
+        loadCategories();
+    }, []);
 
     const products = [
         {
@@ -17,23 +43,45 @@ const HomeScreen = () => {
             discount: 'Make to Order',
             productName: 'Product 2',
         },
-        // Add more products here
     ];
 
     return (
         <ScrollView style={styles.container}>
+
             <View style={styles.header}>
-                <Image source={require('../assets/logo.png')} style={styles.headerImage} />
+                <Image source={require('../assets/home-logo.jpg')} style={styles.headerImage} />
             </View>
 
+
+            {/* Shop By Category */}
             <Text style={styles.headerText}>SHOP BY CATEGORY</Text>
+            <View style={styles.categoriesScrollView}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                    {loading && (
+                        <View style={styles.centeredView}>
+                            <ActivityIndicator style={styles.centeredText} animating={loading} />
+                        </View>
+                    )}
+                    {error && (
+                        <View style={styles.centeredView}>
+                            <AppText style={styles.centeredText}>Error loading categories.</AppText>
+                        </View>
+                    )}
+                    {!loading && !error && categories.map(category => (
+                        <CategoryCard
+                            key={category.id}
+                            title={category.category_code}
+                            imageSource={require('../assets/logo.png')}
+                            onPress={() => {
+                                navigation.navigate(routes.PRODUCT_LIST, { categoryCode: category.category_code});
+                            }}
+                        />
+                    ))}
+                </ScrollView>
+            </View>
 
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-                <Card title="Ring" imageSource={require('../assets/logo.png')} onPress={() => { }} />
-                <Card title="Chain" imageSource={require('../assets/logo.png')} onPress={() => { }} />
-                <Card title="Couple Band" imageSource={require('../assets/logo.png')} onPress={() => { }} />
-            </ScrollView>
 
+            {/* Price Container */}
             <View style={styles.priceContainer}>
                 <Text style={styles.priceText}>Current Platinum 950: ₹ 2911/- per gm</Text>
             </View>
@@ -45,7 +93,7 @@ const HomeScreen = () => {
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {products.map((product, index) => (
-                        <ProductCard
+                        <CollectionCard
                             key={index}
                             imageUrl={product.imageUrl}
                             discount={product.discount}
@@ -63,6 +111,29 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
+    },
+    categoriesScrollView: {
+        height: 180,
+        paddingTop: 5,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        justifyContent: "center",
+
+    },
+    categoriesScrollView: {
+        height: 180,
+        paddingTop: 5,
+        flex: 1,
+    },
+    centeredView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    centeredText: {
+        textAlign: 'center',
+        paddingLeft:175
     },
     header: {
         padding: 10,

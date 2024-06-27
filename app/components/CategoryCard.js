@@ -1,10 +1,9 @@
-// Card.js
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
-const Card = ({ title, imageSource, onPress }) => {
+const CategoryCard = ({ title, imageSource, onPress }) => {
     return (
-        <TouchableWithoutFeedback  onPress={onPress}>
+        <TouchableWithoutFeedback onPress={onPress}>
             <View style={styles.card}>
                 <Image source={imageSource} style={styles.image} />
                 <Text style={styles.title}>{title}</Text>
@@ -25,13 +24,13 @@ const styles = StyleSheet.create({
         margin: 5,
         padding: 8,
         alignItems: 'center',
+        width : 180,
     },
     image: {
-        width: 120,
+        width: 150,
         height: 120,
         marginTop: 5,
         marginBottom: 5,
-        // resizeMode:'contain'
     },
     title: {
         fontSize: 16,
@@ -39,4 +38,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Card;
+export default CategoryCard;
