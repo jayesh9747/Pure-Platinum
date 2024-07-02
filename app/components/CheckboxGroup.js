@@ -1,30 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CustomCheckbox from './CustomCheckbox';
 
-const CheckboxGroup = ({ title, options }) => {
-    const [selectedOption, setSelectedOption] = useState(null);
+const CheckboxGroup = ({ options, selectedOptions, onChange }) => {
+    const handleSelect = (option) => {
+        onChange([option]);
+    };
 
     return (
-            <View style={styles.checkboxGroup}>
-                {options.map((option, index) => (
-                    <CustomCheckbox
-                        key={index}
-                        label={option}
-                        selected={selectedOption === option}
-                        onPress={() => setSelectedOption(option)}
-                    />
-                ))}
-            </View>
+        <View style={styles.checkboxGroup}>
+            {options.map((option, index) => (
+                <CustomCheckbox
+                    key={index}
+                    label={option}
+                    selected={selectedOptions.includes(option)}
+                    onPress={() => handleSelect(option)}
+                />
+            ))}
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    
-    title: {
-        fontSize: 18,
-        marginBottom: 10,
-    },
     checkboxGroup: {
         flexDirection: 'row',
         flexWrap: 'wrap',

@@ -3,14 +3,15 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
-const CollectionCard = ({ imageUrl, discount, productName, onPress }) => {
+const CollectionCard = ({ imageUrl, discount="Make to Order", productName, onPress }) => {
+    const ImageUrl = imageUrl || "http://pureplatinum.jewelzie.com/public/storage/common/default.png";
     return (
         <TouchableWithoutFeedback onPress={onPress}>
             <View style={styles.card}>
                 <View style={styles.discountTag}>
                     <Text style={styles.discountText}>{discount}</Text>
                 </View>
-                <Image source={{ uri: imageUrl }} style={styles.productImage} />
+                <Image source={{ uri: ImageUrl }} style={styles.productImage} />
                 <Text style={styles.productName}>{productName}</Text>
             </View>
         </TouchableWithoutFeedback>

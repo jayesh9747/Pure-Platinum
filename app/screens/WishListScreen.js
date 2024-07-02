@@ -10,14 +10,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 const CartScreen = () => {
     const products = useWishListStore(state => state.products);
     const removeProduct = useWishListStore(state => state.removeProduct);
-
     const { clearWishList } = useWishListStore();
+    const navigation = useNavigation();
 
     const handleRemoveProduct = (productId) => {
         removeProduct(productId);
     };
 
-    const navigation = useNavigation();
+    
 
     return (
         <View style={styles.container}>
@@ -32,7 +32,7 @@ const CartScreen = () => {
                     <>
                         <View style={styles.header}>
                             <Text style={styles.headerText}>ITEMS({products.length})</Text>
-                            <TouchableOpacity onPress={clearWishList} style ={styles.clearCartContainer}>
+                            <TouchableOpacity onPress={clearWishList} style={styles.clearCartContainer}>
                                 <>
                                     <MaterialCommunityIcons name={"delete"} size={25} color={color.medium} />
                                     <Text style={styles.headerText}>DELETE ALL</Text>
@@ -59,14 +59,6 @@ const CartScreen = () => {
                                 </>
                             )}
                         />
-                        <View style={styles.footer}>
-                            <TouchableOpacity style={styles.wishlistButton}>
-                                <Text style={styles.buttonText}>View Details </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.addToCartButton}>
-                                <Text style={styles.buttonText}>PLACE ORDER</Text>
-                            </TouchableOpacity>
-                        </View>
                     </>
                 )}
         </View>
@@ -79,8 +71,8 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: '#fff',
     },
-    clearCartContainer:{
-        flexDirection:"row"
+    clearCartContainer: {
+        flexDirection: "row"
     },
     emptyCartText: {
         textAlign: 'center',

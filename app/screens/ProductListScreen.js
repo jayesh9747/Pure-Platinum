@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, Text, Dimensions } from 'react-native';
 import productsApi from '../apis/productApi'; // Ensure the correct path
 import ProductCard from '../components/ProductCard';
 import { useNavigation } from '@react-navigation/native';
+
+const { width } = Dimensions.get('window');
 
 const ProductListScreen = ({ route }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const { categoryCode } = route.params;
-
-  console.log("this is category code", categoryCode);
+  const { categoryCode, data } = route.params;
 
   const navigation = useNavigation();
 
   const loadProducts = async () => {
-
     try {
-      const result = await productsApi.getCategoryProducts();
-      console.log("this is category product",result)
+      const result = await productsApi.getCategoryProducts(categoryCode);
       setLoading(false);
       setError(false);
       setProducts(result.data.data.category_products);
@@ -30,7 +28,12 @@ const ProductListScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    loadProducts();
+    if (data) {
+      setProducts(data);
+      setLoading(false);
+    } else {
+      loadProducts();
+    }
   }, []);
 
   if (loading) {
@@ -42,8 +45,6 @@ const ProductListScreen = ({ route }) => {
   }
 
   if (error) {
-
-    console.log(error)
     return (
       <View style={styles.error}>
         <Text>Error loading products.</Text>
@@ -56,7 +57,7 @@ const ProductListScreen = ({ route }) => {
       data={products}
       renderItem={({ item }) => <ProductCard product={item} navigation={navigation} />}
       keyExtractor={item => item.id.toString()}
-      numColumns={2}
+      numColumns={Math.floor(width / 180)}
       columnWrapperStyle={styles.row}
       contentContainerStyle={styles.container}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -73,8 +74,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   separator: {
-    height: 0,
-    marginVertical: 0,
+    height: 10,
+    marginVertical: -5,
   },
   loader: {
     flex: 1,

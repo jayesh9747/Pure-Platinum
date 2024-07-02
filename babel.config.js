@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
@@ -7,5 +7,8 @@ module.exports = function(api) {
         plugins: ['react-native-paper/babel'],
       },
     },
+    plugins: [
+      ["react-native-reanimated/plugin", { relativeSourceLocation: true }],
+    ],
   };
 };

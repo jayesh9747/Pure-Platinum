@@ -32,7 +32,6 @@ const LoginScreen = ({ navigation }) => {
     const handleSubmit = async ({ mobile, password }) => {
         try {
             const result = await authapi.login({ mobile, password });
-            console.log(result)
             if (!result || result.status !== 200) throw new Error(result.problem || 'Login failed');
 
             setLoginFailed(false);

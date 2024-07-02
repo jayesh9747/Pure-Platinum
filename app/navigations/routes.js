@@ -7,4 +7,5 @@ export default Object.freeze({
     WISH_LIST: "Wishlist",
     PRODUCT_LIST : "ProductList",
     PRODUCT_DETAILS: 'ProductDetail',
+    SPOTLIGHT_PRODUCT_LIST : "SpotLightProductList"
 })

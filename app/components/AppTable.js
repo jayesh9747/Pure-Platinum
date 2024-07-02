@@ -1,23 +1,28 @@
-
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { DataTable, Text } from 'react-native-paper';
 
 const AppTable = ({ title, data }) => {
+  const filterData = (data) => {
+    return data.map((item) => {
+      const filteredItem = { ...item };
+      delete filteredItem.id;
+      return filteredItem;
+    });
+  };
+
+  const filteredData = filterData(data);
+  const keys = Object.keys(filteredData[0]);
+
   return (
     <View style={styles.tableContainer}>
       <Text style={styles.tableTitle}>{title}</Text>
       <DataTable>
-        <DataTable.Header>
-          {Object.keys(data[0]).map((key, index) => (
-            <DataTable.Title key={index}>{key}</DataTable.Title>
-          ))}
-        </DataTable.Header>
-
-        {data.map((row, rowIndex) => (
-          <DataTable.Row key={rowIndex}>
-            {Object.keys(row).map((key, cellIndex) => (
-              <DataTable.Cell key={cellIndex}>{row[key]}</DataTable.Cell>
+        {keys.map((key) => (
+          <DataTable.Row key={key}>
+            <DataTable.Cell>{key}</DataTable.Cell>
+            {filteredData.map((item, index) => (
+              <DataTable.Cell key={`${key}-${index}`} style={styles.cell}>{item[key]}</DataTable.Cell>
             ))}
           </DataTable.Row>
         ))}
@@ -43,6 +48,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc',
   },
+  cell: {
+    justifyContent: 'center',
+    textAlign: 'center'
+  }
 });
 
 export default AppTable;

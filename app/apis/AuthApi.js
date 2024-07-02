@@ -14,6 +14,12 @@ const register = (registerData) => apiClient.post('/auth/customer/register',
     registerData
 )
 
+
+// @logout 
+const logout = () => apiClient.post('/auth/customer/logout');
+
+
+
 // @getCustomer 
 const fetchCustomer = (token) => apiClient.post('/get-customer', {}, {
     headers: {
@@ -22,9 +28,10 @@ const fetchCustomer = (token) => apiClient.post('/get-customer', {}, {
 })
 
 
-
 export default {
     login,
     fetchCustomer,
-    register
+    register,
+    logout
+
 }

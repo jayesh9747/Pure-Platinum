@@ -1,106 +1,110 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Alert } from 'react-native';
 import CategoryCard from '../components/CategoryCard';
 import CollectionCard from '../components/CollectionCard';
 import categoriesApi from '../apis/category';
+import productApi from '../apis/productApi';
 import routes from '../navigations/routes';
 import AppText from '../components/AppText';
-
 import { ActivityIndicator } from 'react-native-paper';
 
 const HomeScreen = ({ navigation }) => {
-
     const [categories, setCategories] = useState([]);
+    const [spotlightProducts, setSpotlightProducts] = useState([]);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
+    const ImageUri = 'http://pureplatinum.jewelzie.com/public/storage/common/default.png';
 
-    const loadCategories = async () => {
+    const loadData = async () => {
+        setLoading(true);
+        setError(false);
+
         try {
-            setLoading(true);
-            const response = await categoriesApi.getCategories();
-            // console.log("this is category product data",response.data.data)
-            setLoading(false);
-            setError(false);
-            setCategories(response.data?.data);
+            const [categoriesResponse, spotlightProductsResponse] = await Promise.all([
+                categoriesApi.getCategories(),
+                productApi.getSpotlightProducts()
+            ]);
+
+            setCategories(categoriesResponse.data?.data || []);
+            setSpotlightProducts(spotlightProductsResponse.data?.data || []);
         } catch (error) {
             setError(true);
-            console.log(error.response)
+            console.log(error.response);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        loadCategories();
+        loadData();
     }, []);
 
-    const products = [
-        {
-            imageUrl: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
-            discount: 'Make to Order',
-            productName: 'Product 1',
-        },
-        {
-            imageUrl: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
-            discount: 'Make to Order',
-            productName: 'Product 2',
-        },
-    ];
+    const renderContent = (data, errorText, renderItem) => {
+        if (loading) {
+            return (
+                <View style={styles.centeredView}>
+                    <ActivityIndicator style={styles.centeredText} animating={loading} />
+                </View>
+            );
+        }
+
+        if (error) {
+            return (
+                <View style={styles.centeredView}>
+                    <AppText style={styles.centeredText}>{errorText}</AppText>
+                </View>
+            );
+        }
+
+        return data.map(renderItem);
+    };
 
     return (
         <ScrollView style={styles.container}>
-
             <View style={styles.header}>
                 <Image source={require('../assets/home-logo.jpg')} style={styles.headerImage} />
             </View>
 
-
-            {/* Shop By Category */}
             <Text style={styles.headerText}>SHOP BY CATEGORY</Text>
             <View style={styles.categoriesScrollView}>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    {loading && (
-                        <View style={styles.centeredView}>
-                            <ActivityIndicator style={styles.centeredText} animating={loading} />
-                        </View>
+                    {renderContent(
+                        categories,
+                        'Error loading categories.',
+                        category => (
+                            <CategoryCard
+                                key={category.id}
+                                title={category.category_code}
+                                imageSource={{uri: ImageUri}}
+                                onPress={() => {
+                                    navigation.navigate(routes.PRODUCT_LIST, { categoryCode: category.category_code });
+                                }}
+                            />
+                        )
                     )}
-                    {error && (
-                        <View style={styles.centeredView}>
-                            <AppText style={styles.centeredText}>Error loading categories.</AppText>
-                        </View>
-                    )}
-                    {!loading && !error && categories.map(category => (
-                        <CategoryCard
-                            key={category.id}
-                            title={category.category_code}
-                            imageSource={require('../assets/logo.png')}
-                            onPress={() => {
-                                navigation.navigate(routes.PRODUCT_LIST, { categoryCode: category.category_code});
-                            }}
-                        />
-                    ))}
                 </ScrollView>
             </View>
 
-
-            {/* Price Container */}
             <View style={styles.priceContainer}>
                 <Text style={styles.priceText}>Current Platinum 950: ₹ 2911/- per gm</Text>
             </View>
 
+            <Text style={styles.headerText}>Medley Collections</Text>
             <View style={styles.productCardContainer}>
-                <View style={styles.productCardTitle}>
-                    <Text style={styles.sectionTitle}>Medley Collection</Text>
-                    <Text style={styles.viewAllText}>view all</Text>
-                </View>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {products.map((product, index) => (
-                        <CollectionCard
-                            key={index}
-                            imageUrl={product.imageUrl}
-                            discount={product.discount}
-                            productName={product.productName}
-                            onPress={() => { console.log('Product pressed:', product.productName); }}
-                        />
-                    ))}
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                    {renderContent(
+                        spotlightProducts,
+                        'Error loading Medley Collections.',
+                        product => (
+                            <CollectionCard
+                                key={product.id}
+                                imageUrl={product.imageUrl}
+                                discount={product.discount}
+                                productName={product.name}
+                                onPress={() => { navigation.navigate(routes.PRODUCT_LIST, { data: product.products }); }}
+                            />
+                        )
+                    )}
                 </ScrollView>
             </View>
         </ScrollView>
@@ -118,13 +122,14 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        justifyContent: "center",
-
     },
-    categoriesScrollView: {
-        height: 180,
+    productCardContainer: {
         paddingTop: 5,
         flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 250,
+        marginBottom: 8
     },
     centeredView: {
         flex: 1,
@@ -133,7 +138,6 @@ const styles = StyleSheet.create({
     },
     centeredText: {
         textAlign: 'center',
-        paddingLeft:175
     },
     header: {
         padding: 10,
@@ -160,9 +164,6 @@ const styles = StyleSheet.create({
     priceText: {
         color: '#fff',
         fontSize: 16,
-    },
-    productCardContainer: {
-        padding: 10,
     },
     productCardTitle: {
         flexDirection: 'row',
