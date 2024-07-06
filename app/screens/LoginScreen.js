@@ -35,7 +35,10 @@ const LoginScreen = ({ navigation }) => {
             if (!result || result.status !== 200) throw new Error(result.problem || 'Login failed');
 
             setLoginFailed(false);
-            const token = result.data.token;
+            const token = result.data.token
+            // const token = "43|pure_platinum_UVyShV7JYiOwOpZFrziSXsAKZyHMT76z2zC0RSKk8dc55c53";
+
+
 
             await authStore.storeToken(token);
             console.log('Successfully stored token');

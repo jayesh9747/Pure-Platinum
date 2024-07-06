@@ -30,38 +30,52 @@ function AppRadioButton({ sizeOptions, diamondQualityOptions, metalOptions, sele
 
     return (
         <View>
-            <View style={styles.optionSection}>
-                <Text style={styles.optionTitle}>CHOOSE METAL</Text>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <CheckboxGroup
-                        options={metalOptions}
-                        selectedOptions={selectedMetal}
-                        onChange={handleMetalChange}
-                    />
-                </ScrollView>
-            </View>
 
-            <View style={styles.optionSection}>
-                <Text style={styles.optionTitle}>CHOOSE DIAMOND QUALITY</Text>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <CheckboxGroup
-                        options={diamondQualityOptions}
-                        selectedOptions={selectedDiamondQuality}
-                        onChange={handleDiamondQualityChange}
-                    />
-                </ScrollView>
-            </View>
+            {
+                metalOptions.length > 0  &&
+                <View style={styles.optionSection}>
+                    <Text style={styles.optionTitle}>CHOOSE METAL</Text>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        <CheckboxGroup
+                            options={metalOptions}
+                            selectedOptions={selectedMetal}
+                            onChange={handleMetalChange}
+                        />
+                    </ScrollView>
+                </View>
+            }
 
-            <View style={styles.optionSection}>
-                <Text style={styles.optionTitle}>CHOOSE SIZE</Text>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <CheckboxGroup
-                        options={sizeOptions}
-                        selectedOptions={selectedSize}
-                        onChange={handleSizeChange}
-                    />
-                </ScrollView>
-            </View>
+
+            {
+                diamondQualityOptions.length > 0 &&
+                <View style={styles.optionSection}>
+                    <Text style={styles.optionTitle}>CHOOSE DIAMOND QUALITY</Text>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        <CheckboxGroup
+                            options={diamondQualityOptions}
+                            selectedOptions={selectedDiamondQuality}
+                            onChange={handleDiamondQualityChange}
+                        />
+                    </ScrollView>
+                </View>
+            }
+
+
+            {sizeOptions.length > 0 &&
+                <View style={styles.optionSection}>
+                    <Text style={styles.optionTitle}>CHOOSE SIZE</Text>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        <CheckboxGroup
+                            options={sizeOptions}
+                            selectedOptions={selectedSize}
+                            onChange={handleSizeChange}
+                        />
+                    </ScrollView>
+                </View>
+
+            }
+
+
         </View>
     );
 }

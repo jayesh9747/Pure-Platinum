@@ -3,14 +3,14 @@ import apiClient from "./apiclient";
 
 
 // @ userLogin 
-const login = ({ mobile, password }) => apiClient.post('/auth/customer/login', {
+const login = ({ mobile, password }) => apiClient.post('/auth/customer/login-customer', {
     mobile,
     password
 })
 
 
 // @userRegister 
-const register = (registerData) => apiClient.post('/auth/customer/register',
+const register = (registerData) => apiClient.post('/auth/customer/customer-sign-up',
     registerData
 )
 
@@ -21,11 +21,7 @@ const logout = () => apiClient.post('/auth/customer/logout');
 
 
 // @getCustomer 
-const fetchCustomer = (token) => apiClient.post('/get-customer', {}, {
-    headers: {
-        Authorization: `Bearer ${token}`
-    }
-})
+const fetchCustomer = (token) => apiClient.post('/get-customer', {})
 
 
 export default {

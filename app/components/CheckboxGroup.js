@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CustomCheckbox from './CustomCheckbox';
 
-const CheckboxGroup = ({ options, selectedOptions, onChange }) => {
+const CheckboxGroup = ({ options, selectedOptions, onChange, multiselect = false }) => {
     const handleSelect = (option) => {
-        onChange([option]);
+
+        if (multiselect) {
+            onChange(option);
+        } else {
+            onChange([option]);
+        }
     };
 
     return (

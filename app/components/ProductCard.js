@@ -208,20 +208,20 @@ const ProductCard = ({ product, navigation }) => {
                 </View>
                 <Image source={{ uri: productImageUri }} style={styles.productImage} />
                 <Text style={styles.productName}>{code}</Text>
-                <View style={styles.actions}>
+                {/* <View style={styles.actions}> */}
                     {/* <TouchableWithoutFeedback onPress={handleWishListAction}> */}
-                    <TouchableWithoutFeedback >
-                        <View style={[styles.icon, isInWishList && styles.iconInWishList]}>
-                            <FontAwesome name="heart-o" size={22} color="black" />
-                        </View>
-                    </TouchableWithoutFeedback>
+                    {/* <TouchableWithoutFeedback > */}
+                        {/* <View style={[styles.icon, isInWishList && styles.iconInWishList]}> */}
+                            {/* <FontAwesome name="heart-o" size={22} color="black" /> */}
+                        {/* </View> */}
+                    {/* </TouchableWithoutFeedback> */}
                     {/* <TouchableWithoutFeedback onPress={handleCartAction}> */}
-                    <TouchableWithoutFeedback >
-                        <View style={[styles.icon, isInCart && styles.iconInCart]}>
-                            <AntDesign name="shoppingcart" size={22} color="black" />
-                        </View>
-                    </TouchableWithoutFeedback>
-                </View>
+                    {/* <TouchableWithoutFeedback > */}
+                        {/* <View style={[styles.icon, isInCart && styles.iconInCart]}> */}
+                            {/* <AntDesign name="shoppingcart" size={22} color="black" /> */}
+                        {/* </View> */}
+                    {/* </TouchableWithoutFeedback> */}
+                {/* </View> */}
             </View>
         </TouchableWithoutFeedback>
     );

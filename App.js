@@ -67,6 +67,11 @@ import OfflineNotice from './app/components/OfflineNotice';
 import authStorage from './app/auth/authStore';
 import AuthContext from './app/auth/context';
 
+import { ToastMessage } from './app/components/ToastMessage';
+
+import FilterScreen from './app/screens/FilterScreen';
+import RegisterScreen from './app/screens/RegisterScreen';
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -91,17 +96,23 @@ export default function App() {
     return null; // Render nothing while app is loading
   }
 
-  console.log(token);
+  console.log("this is token ", token);
+
+
+  // cache.clearAll();
 
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
-      <View style={{ flex: 1 }}>
-        <OfflineNotice />
-        <NavigationContainer theme={navigationTheme}>
-          {token ? <AppDrawerNavigator /> : <AuthNavigator />}
-        </NavigationContainer>
-      </View>
-    </AuthContext.Provider>
+    // <AuthContext.Provider value={{ token, setToken }}>
+    //   <View style={{ flex: 1 }}>
+    //     <OfflineNotice />
+    //     <NavigationContainer theme={navigationTheme}>
+    //       {token ? <AppDrawerNavigator /> : <AuthNavigator />}
+    //     </NavigationContainer>
+    //     <ToastMessage />
+    //   </View>
+    // </AuthContext.Provider>
     // <ProductViewScreen route={{ params: { productId: 6 } }} />
+    // <FilterScreen />
+    <><RegisterScreen /></>
   );
 }

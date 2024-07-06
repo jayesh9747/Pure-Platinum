@@ -8,16 +8,21 @@ const AddToWishList = ({ product_id, size_id, metal_id, diamond_id }) => apiClie
     diamond_id,
 });
 
-const DeleteProductFromWishList = (wishlist_id) => { '/delete-from-wishlist', { wishlist_id } };
-
 const GetWishListProducts = () => apiClient.post('/get-wishlist-products', {});
 
+const DeleteProductFromWishList = (wishlist_id) => apiClient.post('/delete-from-wishlist', { wishlist_id });
+
+
 const DeleteAllItemFromWishList = () => apiClient.post('delete-all-from-wishlist', {});
+
+
+const TransferProductToCart = (wishlist_id) => apiClient.post('/transfer-to-cart', { wishlist_id });
 
 
 export default {
     AddToWishList,
     DeleteProductFromWishList,
     GetWishListProducts,
-    DeleteAllItemFromWishList
+    DeleteAllItemFromWishList,
+    TransferProductToCart
 }
