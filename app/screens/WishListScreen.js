@@ -27,7 +27,7 @@ const WishList = () => {
             setProducts(result.data.data.products);
             console.log("Fetched wishlist products", result.data.data.products);
         } catch (error) {
-            console.log("Failed to fetch products from API, using store products", error);
+            console.log("Failed to fetch product from server", error.response.data.message);
         } finally {
             setLoading(false);
         }
@@ -71,8 +71,8 @@ const WishList = () => {
         removeProduct(wishlist_id);
 
         try {
-           const result =  await wishListApi.TransferProductToCart(wishlist_id);
-           showToast("success", `${result.data.message}`);
+            const result = await wishListApi.TransferProductToCart(wishlist_id);
+            showToast("success", `${result.data.message}`);
         } catch (error) {
             console.log("Failed to transfer product to cart", error);
             showToast("success", `${error.response.data.message}`);

@@ -41,18 +41,20 @@ export { ToastMessage, showToast };
 
 const styles = StyleSheet.create({
   successContainer: {
-    height: 40,
+    height: "auto",
     width: 'auto',
-    padding: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 15,
     backgroundColor: color.dark,
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorContainer: {
-    height: 40,
+    height: "auto",
     width: 'auto',
-    padding: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 15,
     backgroundColor: "red",
     justifyContent: 'center',

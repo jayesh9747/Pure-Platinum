@@ -8,7 +8,6 @@ import AppText from './AppText'
 import colors from '../config/color'
 
 const ListItem = ({ image, title, IconComponent, subtitle, onPress, renderRightActions }) => {
-    console.log("calling from the")
     return (
         <GestureHandlerRootView>
             <Swipeable renderRightActions={renderRightActions} >

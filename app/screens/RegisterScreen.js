@@ -8,6 +8,8 @@ import routes from '../navigations/routes';
 import dropdownApi from '../apis/dropdown';
 import validation from '../validation/registerValidation'
 import authapi from '../apis/AuthApi';
+import { useFormikContext } from 'formik';
+import { showToast } from '../components/ToastMessage';
 
 
 
@@ -16,6 +18,10 @@ const RegisterScreen = ({ navigation }) => {
     const [countryTags, SetcountryTags] = useState([]);
     const [stateTags, SetStateTags] = useState([]);
     const [cityTags, SetCityTags] = useState([]);
+    const [country_id, Setcountry_id] = useState('');
+    const [state_id, Setstate_id] = useState('');
+
+
 
 
     const fetchCountries = async () => {
@@ -26,33 +32,36 @@ const RegisterScreen = ({ navigation }) => {
                 label: country?.name,
                 value: country?.id
             }));
-            console.log(country);
+
             SetcountryTags(country);
 
         } catch (error) {
-            console.log(`error is occurred while fetching country`, error);
+            console.log(`error is occurred while fetching country`, error.response?.data);
         }
     }
 
-    const fetchStates = async (country_id) => {
+    const fetchStates = async () => {
         try {
-            const result = await dropdownApi.getStates(country_id || "101");
+            const result = await dropdownApi.getStates(country_id);
 
             states = result.data.data.map((state) => ({
                 label: state?.name,
                 value: state?.id
             }));
-            console.log(states);
+            console.log("this is states ", states);
             SetStateTags(states);
 
-        } catch (error) {
-            console.log(`error is occurred while fetching states`, error);
+        } catch (error) {   
+
+            showToast('error',error?.response?.data.errors?.country_id)
+            
+            console.log(`error is occurred while fetching states`, error?.response?.data.errors?.country_id);
         }
     }
 
-    const fetchCities = async (state_id) => {
+    const fetchCities = async () => {
         try {
-            const result = await dropdownApi.getCity(state_id || "4030");
+            const result = await dropdownApi.getCity(state_id);
 
             cities = result.data.data.map((city) => ({
                 label: city?.name,
@@ -62,7 +71,8 @@ const RegisterScreen = ({ navigation }) => {
             SetCityTags(cities);
 
         } catch (error) {
-            console.log(`error is occurred while fetching cities`, error);
+            showToast('error',error?.response?.data.errors?.state_id)
+            console.log(`error is occurred while fetching cities`, error.response.data);
         }
     }
 
@@ -74,7 +84,7 @@ const RegisterScreen = ({ navigation }) => {
             console.log(result);
             if (!result) throw new Error(result.problem);
 
-            console.log("successfully login the user",result.data);
+            console.log("successfully login the user", result.data);
         } catch (error) {
             console.error(error.response?.data?.message)
         }
@@ -83,9 +93,19 @@ const RegisterScreen = ({ navigation }) => {
 
     useEffect(() => {
         fetchCountries();
-        fetchStates();
-        fetchCities();
     }, []);
+
+    useEffect(() => {
+        if (country_id) {
+            fetchStates();
+        }
+    }, [country_id]);
+
+    useEffect(() => {
+        if (state_id) {
+            fetchCities();
+        }
+    }, [state_id]);
 
 
 
@@ -196,20 +216,23 @@ const RegisterScreen = ({ navigation }) => {
                         title={'Country'}
                         name="country_id"
                         type="dropdown"
-                        disable={countryTags === '' ? true : false}
+                        disable={countryTags === null ? true : false}
                         items={countryTags}
+                        onset={Setcountry_id}
                         placeholder="Select country" />
 
                     <AppFormField
                         title='State'
                         name="state_id" type="dropdown"
+                        disable={stateTags === null ? true : false}
                         items={stateTags}
+                        onset={Setstate_id}
                         placeholder="Select state" />
                     <AppFormField
                         title="City"
                         name="city_id"
                         type="dropdown"
-                        items={cityTags} 
+                        items={cityTags}
                         placeholder="Select city" />
                     <AppFormField
                         autoCorrect={false}

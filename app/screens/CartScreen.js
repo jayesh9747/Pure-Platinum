@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Text, Image, TouchableOpacity, Alert, TouchableWithoutFeedback } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -19,22 +19,25 @@ const CartScreen = () => {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
+
+
     const handleCartProducts = async () => {
         setLoading(true);
         try {
             const result = await cartApi.GetCartProducts();
             setProducts(result.data.data.products);
             console.log("Fetched cart products", result.data.data.products);
+            setLoading(false);
         } catch (error) {
-            console.log("Failed to fetch product from server", error);
-        } finally {
+            showToast("error", `${error.response.data}`);
+            console.log("Failed to fetch product from server", error?.response?.data);
             setLoading(false);
         }
     };
 
     const removeAllProductFromCart = async () => {
         const originalProducts = [...products];
-        clearCart();
+        await clearCart();
         try {
             const result = await cartApi.DeleteAllItemFromCart();
             showToast("success", `${result.data.message}`);
@@ -64,13 +67,13 @@ const CartScreen = () => {
 
     const handleUpdateProduct = async (product) => {
         const originalProducts = [...products];
-        removeProduct(product.id);  // Assuming product has an id property
+        removeProduct(product.id); 
 
         try {
             await cartApi.UpdateProductCart(product);
         } catch (error) {
             console.log("Failed to update product in cart", error);
-            setProducts(originalProducts); // Restore original products if API call fails
+            setProducts(originalProducts); 
             Alert.alert("Error", "Failed to update product. Please try again.");
         }
     };

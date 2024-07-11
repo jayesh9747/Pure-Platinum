@@ -2,10 +2,11 @@ import apiClient from "./apiclient";
 
 
 // @GET Category 
-const getCategoryProducts = (values) => apiClient.post('/get-category-products', {
-    category_code: "EV",
-    items: "12",
-    page: 1,
+const getCategoryProducts = ({ category_code, page, ...filteredOptions }) => apiClient.post('/get-category-products', {
+    category_code: category_code,
+    items: "10",
+    page: page,
+    ...filteredOptions
 });
 
 

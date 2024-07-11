@@ -24,7 +24,7 @@ const isExpired = (item) => {
 
 const get = async (key) => {
     try {
-        console.log("this is restor from the cache")
+        console.log("this is restor from the cache",key)
         const value = await AsyncStorage.getItem(prefix + key);
         if (!value) return null;
 

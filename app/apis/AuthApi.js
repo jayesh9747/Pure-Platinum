@@ -14,6 +14,10 @@ const register = (registerData) => apiClient.post('/auth/customer/customer-sign-
     registerData
 )
 
+// @forgotPassword
+
+const forgotPassword = (email) => apiClient.post('/auth/customer/forgot-password',{email});
+
 
 // @logout 
 const logout = () => apiClient.post('/auth/customer/logout');
@@ -21,13 +25,13 @@ const logout = () => apiClient.post('/auth/customer/logout');
 
 
 // @getCustomer 
-const fetchCustomer = (token) => apiClient.post('/get-customer', {})
+const fetchCustomer = () => apiClient.post('/get-customer')
 
 
 export default {
     login,
     fetchCustomer,
     register,
-    logout
-
+    logout,
+    forgotPassword
 }

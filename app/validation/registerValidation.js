@@ -6,7 +6,7 @@ const RegisterValidationSchema = Yup.object().shape({
     email: Yup.string().email('Enter a valid email').required('Email is required').label('Email'),
     company: Yup.string().required('Company is required').label('Company'),
     customer_type: Yup.string().oneOf(['Corporate', 'Export', 'Retailer', 'Wholesaler']).required('Customer Type is required').label('Customer Type'),
-    gst_no: Yup.string().trim().matches(/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/, 'Invalid GST No.').required('GST No is required').label('GST No'),
+    // gst_no: Yup.string().trim().matches(/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/, 'Invalid GST No.').required('GST No is required').label('GST No'),
     password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
         .matches(/[a-z]/, 'Password must contain at least one lowercase letter')

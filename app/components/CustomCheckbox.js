@@ -8,11 +8,11 @@ const CustomCheckbox = ({ label, selected, onPress }) => {
         <TouchableWithoutFeedback onPress={onPress}>
             <View style={[styles.checkboxContainer, selected && styles.selectedCheckbox]}>
                 <Text style={[styles.checkboxLabel, selected && styles.selectedCheckboxLabel]}>{label}</Text>
-                {selected && (
+                {/* {selected && (
                     <View style={styles.iconContainer}>
                         <Icon name="check" size={20} color="white" />
                     </View>
-                )}
+                )} */}
             </View>
         </TouchableWithoutFeedback>
     );
@@ -41,14 +41,14 @@ const styles = StyleSheet.create({
     selectedCheckboxLabel: {
         color: 'white',
     },
-    iconContainer: {
-        position: 'absolute',
-        bottom: -5,
-        right: -5,
-        backgroundColor: color.secondary,
-        borderRadius: 50,
-        padding: 1,
-    },
+    // iconContainer: {
+    //     position: 'absolute',
+    //     bottom: -5,
+    //     right: -5,
+    //     backgroundColor: color.secondary,
+    //     borderRadius: 50,
+    //     padding: 1,
+    // },
 });
 
 export default CustomCheckbox;

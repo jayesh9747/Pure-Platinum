@@ -7,8 +7,18 @@ import AppText from '../AppText';
 import DatePickerField from './AppDatePickerField';
 import DropdownField from './AppDropdownField';
 
-const AppFormField = ({ title, name, width, type, items, ...otherProps }) => {
+const AppFormField = ({ title, name, width, type, onset, disable, items, ...otherProps }) => {
     const { setFieldTouched, handleChange, errors, touched, setFieldValue, values } = useFormikContext();
+
+    const handleDropdownChange = (value) => {
+        setFieldValue(name, value);
+        if (onset) {
+            onset(value);
+        }
+        if (value) {
+            console.log(`This is ${name} value:`, value);
+        }
+    };
 
     const renderField = () => {
         switch (type) {
@@ -30,6 +40,8 @@ const AppFormField = ({ title, name, width, type, items, ...otherProps }) => {
                         items={items}
                         placeholder={otherProps.placeholder}
                         width={width}
+                        onset={handleDropdownChange}
+                        disabled={disable}
                         {...otherProps}
                     />
                 );

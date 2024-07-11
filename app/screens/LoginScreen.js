@@ -8,9 +8,9 @@ import Screen from '../components/Screen';
 import color from '../config/color';
 import routes from '../navigations/routes';
 import authapi from '../apis/AuthApi';
-import { useNavigation } from '@react-navigation/native';
 import authStore from '../auth/authStore';
 import AuthContext from '../auth/context';
+import { showToast } from '../components/ToastMessage';
 
 const validationSchema = Yup.object().shape({
     mobile: Yup.string()
@@ -26,25 +26,29 @@ const LoginScreen = ({ navigation }) => {
     const [errMsg, setErrMsg] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
 
-    const navigate = useNavigation();
     const authContext = useContext(AuthContext);
 
     const handleSubmit = async ({ mobile, password }) => {
         try {
             const result = await authapi.login({ mobile, password });
+
+            console.log(result.data.token);
+
             if (!result || result.status !== 200) throw new Error(result.problem || 'Login failed');
+
 
             setLoginFailed(false);
             const token = result.data.token
-            // const token = "43|pure_platinum_UVyShV7JYiOwOpZFrziSXsAKZyHMT76z2zC0RSKk8dc55c53";
-
-
+            console.log("this is from the login screen", token);
 
             await authStore.storeToken(token);
+            const tok = await authStore.getToken();
+            console.log("this is from login screen store token ", tok);
             console.log('Successfully stored token');
             authContext.setToken(token);
+            showToast("success", `${result.data.message}`);
         } catch (error) {
-            console.error(error);
+            console.log(error);
             setLoginFailed(true);
             setErrMsg(error.response?.data?.message || 'An unexpected error occurred');
             authStore.removeToken();
@@ -96,7 +100,10 @@ const LoginScreen = ({ navigation }) => {
                     onRightIconPress={() => setPasswordVisible(!passwordVisible)}
                 />
 
-                <AppText style={styles.forgetPassword}>Forget Password?</AppText>
+                {/* <AppText style={styles.forgetPassword}>Forget Password?</AppText> */}
+                <TouchableWithoutFeedback onPress={() => navigation.navigate(routes.FORGET_PASSWORD)}>
+                    <Text style={styles.forgetPassword}>Forget Password?</Text>
+                </TouchableWithoutFeedback>
                 <SubmitButton title='Login' color={color.primary} />
             </AppForm>
             <AppText style={styles.footerline}>All Rights are reserved Made by Konnections</AppText>

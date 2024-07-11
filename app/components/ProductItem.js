@@ -10,7 +10,6 @@ const ProductItem = ({
   firstButtonText,
   secondButtonText
 }) => {
-    console.log("this is calling from cart", item.product_id);
   return (
     <TouchableWithoutFeedback onPress={() => navigation.navigate('ProductDetail', { productId: item.product_id })}>
       <View style={styles.productContainer}>
