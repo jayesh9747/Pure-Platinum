@@ -39,12 +39,11 @@ const LoginScreen = ({ navigation }) => {
 
             setLoginFailed(false);
             const token = result.data.token
-            console.log("this is from the login screen", token);
 
             await authStore.storeToken(token);
-            const tok = await authStore.getToken();
-            console.log("this is from login screen store token ", tok);
-            console.log('Successfully stored token');
+            // const tok = await authStore.getToken();
+            // console.log("this is from login screen store token ", tok);
+            // console.log('Successfully stored token');
             authContext.setToken(token);
             showToast("success", `${result.data.message}`);
         } catch (error) {

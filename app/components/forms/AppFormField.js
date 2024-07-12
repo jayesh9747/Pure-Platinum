@@ -5,9 +5,9 @@ import AppTextInput from '../AppTextInput';
 import ErrorMessage from './ErrorMessage';
 import AppText from '../AppText';
 import DatePickerField from './AppDatePickerField';
-import DropdownField from './AppDropdownField';
+import AppDropdownField from './AppDropdownField';
 
-const AppFormField = ({ title, name, width, type, onset, disable, items, ...otherProps }) => {
+const AppFormField = ({ title, name, width, type, onset, items, editable, ...otherProps }) => {
     const { setFieldTouched, handleChange, errors, touched, setFieldValue, values } = useFormikContext();
 
     const handleDropdownChange = (value) => {
@@ -35,13 +35,14 @@ const AppFormField = ({ title, name, width, type, onset, disable, items, ...othe
                 );
             case 'dropdown':
                 return (
-                    <DropdownField
+                    <AppDropdownField
                         name={name}
                         items={items}
                         placeholder={otherProps.placeholder}
                         width={width}
                         onset={handleDropdownChange}
-                        disabled={disable}
+                        disabled={editable}
+                        value={values[name]}
                         {...otherProps}
                     />
                 );
@@ -51,6 +52,8 @@ const AppFormField = ({ title, name, width, type, onset, disable, items, ...othe
                         onBlur={() => setFieldTouched(name)}
                         onChangeText={handleChange(name)}
                         width={width}
+                        disabled={editable}
+                        value={values[name]}
                         {...otherProps}
                     />
                 );

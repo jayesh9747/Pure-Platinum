@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import color from '../config/color';
 import FilterScreen from './FilterScreen';
 import NoItem from '../components/NoItem';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +18,7 @@ const ProductListScreen = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [sortOrder, setSortOrder] = useState('amount_asc');
 
   const [selectedOptions, setSelectedOptions] = useState([]);
 
@@ -26,9 +28,9 @@ const ProductListScreen = ({ route }) => {
   const loadProducts = async (newPage = 1) => {
     try {
       if (categoryCode) {
-        
+
         setLoading(true);
-        const result = await productsApi.getCategoryProducts({ category_code: categoryCode, page: newPage, ...selectedOptions });
+        const result = await productsApi.getCategoryProducts({ category_code: categoryCode, page: newPage, ...{ ...selectedOptions, sort_by: sortOrder } });
         const productsWithPage = result.data.data.products.map(product => ({
           ...product,
           page: newPage,
@@ -58,7 +60,7 @@ const ProductListScreen = ({ route }) => {
 
   useEffect(() => {
     loadProducts(page);
-  }, [page]);
+  }, [page,sortOrder]);
 
   useEffect(() => {
     setPage(1);
@@ -78,6 +80,10 @@ const ProductListScreen = ({ route }) => {
 
   const handleCloseModal = () => {
     setModalVisible(false);
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === 'amount_asc' ? 'amount_dec' : 'amount_asc'));
   };
 
   if (loading && page === 1) {
@@ -111,9 +117,11 @@ const ProductListScreen = ({ route }) => {
 
       {products.length > 0 &&
         <View style={styles.header}>
-          <TouchableWithoutFeedback onPress={() => console.log("Touched")}>
+          <TouchableWithoutFeedback onPress={toggleSortOrder}>
             <View style={styles.Button}>
-              <Text style={styles.buttonText}>SORT</Text>
+              <View style={styles.buttonContent}>
+                <Text style={styles.buttonText}>SORT:</Text>{sortOrder === 'amount_asc' ? <MaterialIcons name="arrow-upward" size={20} color={color.medium} /> : <MaterialIcons name="arrow-downward" size={20} color={color.medium} />}
+              </View>
             </View>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={handleOpenModal}>
@@ -182,7 +190,7 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 3,
     borderRadius: 5,
-    borderBottomColor: "#",
+    borderBottomColor: "#000",
     alignItems: 'center',
   },
   buttonText: {
@@ -193,6 +201,10 @@ const styles = StyleSheet.create({
   },
   loading: {
     padding: 10,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

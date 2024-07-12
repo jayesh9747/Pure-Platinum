@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native';
 import HomeNavigator from './HomeNavigator';
 import CartScreen from '../screens/CartScreen';
 import WishListScreen from '../screens/WishListScreen';
-import AccountScreen from '../screens/AccountScreen';
+import AccountNavigator from './AccountNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,12 +51,12 @@ function AppNavigator({ navigation }) {
             />
             <Tab.Screen
                 name="Account"
-                component={AccountScreen}
+                component={AccountNavigator}
                 options={{
                     tabBarIcon: ({ size, color }) => <MaterialCommunityIcons name="account" size={size} color={color} />,
                     title: 'Account',
                     headerLeft: () => <DrawerButton navigation={navigation} />,
-                    headerShown: true,
+                    headerShown: false,
                 }}
             />
         </Tab.Navigator>

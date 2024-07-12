@@ -28,10 +28,15 @@ const logout = () => apiClient.post('/auth/customer/logout');
 const fetchCustomer = () => apiClient.post('/get-customer')
 
 
+// @updateCustomer 
+const updateCustomer = (Data) => apiClient.post("/update-customer",Data);
+
+
 export default {
     login,
     fetchCustomer,
     register,
     logout,
-    forgotPassword
+    forgotPassword,
+    updateCustomer
 }

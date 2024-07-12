@@ -7,6 +7,8 @@ import ListItemSeparator from '../components/ListItemSeparator';
 import AuthApi from '../apis/AuthApi';
 import authStore from '../auth/authStore';
 import AuthContext from '../auth/context';
+import routes from '../navigations/routes';
+import { showToast } from '../components/ToastMessage';
 
 const menuItems = [
     {
@@ -38,7 +40,7 @@ const AccountScreen = ({ navigation }) => {
             const result = await AuthApi.fetchCustomer();
             setCustomer(result.data.data);
             setLoading(false);
-            console.log(result.data.data);
+            console.log("this is account info", result.data.data);
         } catch (error) {
             console.error(error?.response?.data);
             setLoading(false);
@@ -48,6 +50,8 @@ const AccountScreen = ({ navigation }) => {
     const logout = async () => {
         try {
             const result = await AuthApi.logout();
+            if (!result) throw new Error(result.problem);
+            showToast('success', `${result.data.message}`);
             console.log('Logout result:', result);
             await authStore.removeToken();
             setToken(null);
@@ -97,6 +101,7 @@ const AccountScreen = ({ navigation }) => {
                     title={customer.name}
                     subtitle={customer.email}
                     image={require('../assets/user.png')}
+                    onPress={() => navigation.navigate(routes.ACCOUNT_INFO, { data: customer })}
                 />
             </View>
             <View >

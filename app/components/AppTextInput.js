@@ -5,9 +5,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import defaultStyles from '../config/style';
 import color from '../config/color';
 
-const AppTextInput = ({ icon, rightIcon, onRightIconPress, width = '100%', ...otherProps }) => {
+const AppTextInput = ({ icon, rightIcon, onRightIconPress, width = '100%', value, disabled, style, ...otherProps }) => {
     return (
-        <View style={[styles.container, { width }]}>
+        <View style={[styles.container, { width }, style]}>
             {icon && (
                 <MaterialCommunityIcons
                     name={icon}
@@ -16,11 +16,25 @@ const AppTextInput = ({ icon, rightIcon, onRightIconPress, width = '100%', ...ot
                     style={styles.icon}
                 />
             )}
-            <TextInput
-                placeholderTextColor={color.medium}
-                style={[styles.textInput, defaultStyles.text]}
-                {...otherProps}
-            />
+            {
+                disabled &&
+                <TextInput
+                    placeholderTextColor={color.medium}
+                    value={value}
+                    editable={!disabled}
+                    style={[styles.textInput, defaultStyles.text]}
+                    {...otherProps}
+                />
+            }
+            {
+                !disabled &&
+                <TextInput
+                    placeholderTextColor={color.medium}
+                    value={value}
+                    style={[styles.textInput, defaultStyles.text]}
+                    {...otherProps}
+                />
+            }
             {rightIcon && (
                 <TouchableOpacity onPress={onRightIconPress} style={styles.rightIconContainer}>
                     <MaterialCommunityIcons

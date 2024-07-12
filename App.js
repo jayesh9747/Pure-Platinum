@@ -41,7 +41,6 @@ export default function App() {
     return null; // Render nothing while app is loading
   }
 
-console.log(token);
 
 
 

@@ -1,95 +1,96 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Image, TouchableWithoutFeedback, View, ScrollView, Text } from 'react-native';
 import AppText from '../components/AppText';
 import Screen from '../components/Screen';
-import { AppFormField, SubmitButton, AppForm } from '../components/forms';
+import { AppFormField, SubmitButton, AppForm, ErrorMessage } from '../components/forms';
 import color from '../config/color';
 import routes from '../navigations/routes';
 import dropdownApi from '../apis/dropdown';
-import validation from '../validation/registerValidation'
+import validation from '../validation/registerValidation';
 import authapi from '../apis/AuthApi';
-import { useFormikContext } from 'formik';
 import { showToast } from '../components/ToastMessage';
-
-
+import authStore from '../auth/authStore';
+import AuthContext from '../auth/context';
+import PhoneCodeAndMobile from '../components/PhoneCodeAndMobile';
 
 const RegisterScreen = ({ navigation }) => {
-
     const [countryTags, SetcountryTags] = useState([]);
     const [stateTags, SetStateTags] = useState([]);
     const [cityTags, SetCityTags] = useState([]);
     const [country_id, Setcountry_id] = useState('');
     const [state_id, Setstate_id] = useState('');
+    const [phoneCodeTags, setPhoneCodeTags] = useState([]);
+    const [loginFailed, setLoginFailed] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
-
-
+    const authContext = useContext(AuthContext);
 
     const fetchCountries = async () => {
         try {
             const result = await dropdownApi.getCountries();
-
-            country = result.data.data.map((country) => ({
+            const countries = result.data.data.map((country) => ({
                 label: country?.name,
                 value: country?.id
             }));
-
-            SetcountryTags(country);
-
+            const phoneCodes = result.data.data.map((phoneCode) => ({
+                label: phoneCode?.iso2,
+                value: phoneCode?.iso2
+            }));
+            SetcountryTags(countries);
+            setPhoneCodeTags(phoneCodes);
         } catch (error) {
-            console.log(`error is occurred while fetching country`, error.response?.data);
+            console.log(`Error occurred while fetching countries: ${error.response?.data}`);
         }
-    }
+    };
 
     const fetchStates = async () => {
         try {
             const result = await dropdownApi.getStates(country_id);
-
-            states = result.data.data.map((state) => ({
+            const states = result.data.data.map((state) => ({
                 label: state?.name,
                 value: state?.id
             }));
-            console.log("this is states ", states);
             SetStateTags(states);
-
-        } catch (error) {   
-
-            showToast('error',error?.response?.data.errors?.country_id)
-            
-            console.log(`error is occurred while fetching states`, error?.response?.data.errors?.country_id);
+        } catch (error) {
+            console.log(`Error occurred while fetching states: ${error?.response?.data.errors?.country_id}`);
+            showToast('error', error?.response?.data.errors?.country_id);
         }
-    }
+    };
 
     const fetchCities = async () => {
         try {
             const result = await dropdownApi.getCity(state_id);
-
-            cities = result.data.data.map((city) => ({
+            const cities = result.data.data.map((city) => ({
                 label: city?.name,
                 value: city?.id
             }));
-            console.log(cities);
             SetCityTags(cities);
-
         } catch (error) {
-            showToast('error',error?.response?.data.errors?.state_id)
-            console.log(`error is occurred while fetching cities`, error.response.data);
+            console.log(`Error occurred while fetching cities: ${error.response.data}`);
+            showToast('error', error?.response?.data.errors?.state_id);
         }
-    }
-
+    };
 
     const handleSubmit = async (registerData) => {
-        console.log(registerData)
         try {
             const result = await authapi.register(registerData);
-            console.log(result);
             if (!result) throw new Error(result.problem);
-
-            console.log("successfully login the user", result.data);
+            const token = result.data.token;
+            await authStore.storeToken(token);
+            authContext.setToken(token);
+            showToast("success", `${result.data.message}`);
         } catch (error) {
-            console.error(error.response?.data?.message)
+            const errorData = error.response?.data?.errors;
+            const firstKey = errorData ? Object.keys(errorData)[0] : null;
+            const firstErrorMessage = firstKey ? errorData[firstKey][0] : 'An unexpected error occurred';
+            console.log(firstErrorMessage);
+            setLoginFailed(true);
+            setErrMsg(firstErrorMessage || 'An unexpected error occurred');
+            showToast("error", `${error.response?.data?.message}`);
+            authStore.removeToken();
         }
-    }
-
+    };
 
     useEffect(() => {
         fetchCountries();
@@ -106,9 +107,6 @@ const RegisterScreen = ({ navigation }) => {
             fetchCities();
         }
     }, [state_id]);
-
-
-
 
     return (
         <Screen style={styles.container}>
@@ -144,21 +142,20 @@ const RegisterScreen = ({ navigation }) => {
                         country_id: '',
                         address: '',
                         pin_code: '',
+                        phone_code: "",
                     }}
                     onSubmit={(values) => handleSubmit(values)}
-                    validationSchema={validation.RegisterValidationSchema}
+                    validationSchema={validation}
                 >
+                    {loginFailed && <ErrorMessage visible={true} error={errMsg} />}
                     <AppFormField
                         autoCorrect={false}
                         name="name"
                         title="Name"
                         placeholder="Enter Name" />
-                    <AppFormField
-                        autoCorrect={false}
-                        name="mobile"
-                        title="Mobile No"
-                        keyboardType="numeric"
-                        placeholder="Enter Mobile" />
+                    <PhoneCodeAndMobile
+                        phoneCodeItems={phoneCodeTags}
+                    />
                     <AppFormField
                         autoCapitalize="none"
                         autoCorrect={false}
@@ -179,7 +176,8 @@ const RegisterScreen = ({ navigation }) => {
                             { label: 'Export', value: 'export' },
                             { label: 'Retailer', value: 'retailer' },
                             { label: 'Wholesaler', value: 'wholesaler' },
-                        ]} placeholder="Select customerType" />
+                        ]}
+                        placeholder="Select customerType" />
                     <AppFormField
                         title="GST No"
                         name="gst_no"
@@ -188,18 +186,22 @@ const RegisterScreen = ({ navigation }) => {
                         title="Password"
                         autoCapitalize="none"
                         autoCorrect={false}
+                        rightIcon={passwordVisible ? 'eye-off' : 'eye'}
                         name="password"
                         placeholder="Password"
-                        secureTextEntry
-                        textContentType="password" />
+                        secureTextEntry={!passwordVisible}
+                        textContentType="password"
+                        onRightIconPress={() => setPasswordVisible(!passwordVisible)} />
                     <AppFormField
                         title='Confirm Password'
                         autoCapitalize="none"
                         autoCorrect={false}
+                        rightIcon={passwordVisible ? 'eye-off' : 'eye'}
                         name="confirmPassword"
                         placeholder="Confirm Password"
-                        secureTextEntry
-                        textContentType="password" />
+                        secureTextEntry={!passwordVisible}
+                        textContentType="password"
+                        onRightIconPress={() => setPasswordVisible(!passwordVisible)} />
                     <AppFormField
                         title="Address"
                         name="address"
@@ -211,42 +213,36 @@ const RegisterScreen = ({ navigation }) => {
                         name="dob"
                         type="date"
                         placeholder="Choose Date" />
-
                     <AppFormField
                         title={'Country'}
-                        name="country_id"
-                        type="dropdown"
-                        disable={countryTags === null ? true : false}
+                        type={'dropdown'}
                         items={countryTags}
-                        onset={Setcountry_id}
-                        placeholder="Select country" />
-
+                        placeholder={'Select Country'}
+                        name="country_id"
+                        onSelected={(selectedCountry) => Setcountry_id(selectedCountry)}
+                    />
                     <AppFormField
-                        title='State'
-                        name="state_id" type="dropdown"
-                        disable={stateTags === null ? true : false}
+                        title={'State'}
+                        type={'dropdown'}
                         items={stateTags}
-                        onset={Setstate_id}
-                        placeholder="Select state" />
+                        placeholder={'Select State'}
+                        name="state_id"
+                        onSelected={(selectedState) => Setstate_id(selectedState)}
+                    />
                     <AppFormField
-                        title="City"
-                        name="city_id"
-                        type="dropdown"
+                        title={'City'}
+                        type={'dropdown'}
                         items={cityTags}
-                        placeholder="Select city" />
+                        placeholder={'Select City'}
+                        name="city_id"
+                    />
                     <AppFormField
-                        autoCorrect={false}
+                        title="Pin code"
                         name="pin_code"
-                        title="PIN Code"
-                        keyboardType="numeric"
-                        placeholder="Enter PIN CODE" />
-                    <SubmitButton
-                        title="Register"
-                        color={color.primary} />
+                        placeholder="Enter Pin code" />
+                    <SubmitButton title="Register" />
                 </AppForm>
-                <AppText style={styles.footerline}>All Rights are reserved Madeby Konnections</AppText>
             </ScrollView>
-
         </Screen>
     );
 };

@@ -29,7 +29,7 @@ const CartScreen = () => {
             console.log("Fetched cart products", result.data.data.products);
             setLoading(false);
         } catch (error) {
-            showToast("error", `${error.response.data}`);
+            showToast("error", `${error.response?.data}`);
             console.log("Failed to fetch product from server", error?.response?.data);
             setLoading(false);
         }
